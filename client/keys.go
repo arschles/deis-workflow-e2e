@@ -1,0 +1,58 @@
+package client
+
+import (
+	"fmt"
+	"regexp"
+
+	"github.com/deis/workflow-cli/controller/api"
+	"github.com/deis/workflow-cli/controller/models/keys"
+)
+
+var (
+	sshPubKeyRegex = regexp.MustCompile("^(ssh-...|ecdsa-[^ ]+) ([^ ]+) ?(.*)")
+)
+
+// SSHPubKeyInfo contains the information on an SSH public key
+type SSHPubKeyInfo struct {
+	ID     string
+	Public string
+}
+
+// ErrInvalidSSHPubKey is the error returned when an SSH public key is unrecognizable
+type ErrInvalidSSHPubKey struct {
+	pubKey []byte
+}
+
+// Error is the error interface implementation
+func (e ErrInvalidSSHPubKey) Error() string {
+	return fmt.Sprintf("invalid SSH public key %s", string(e.pubKey))
+}
+
+// ErrUnknownSSHPubKeyID is the error returned when an SSH public key is not the expected format
+type ErrUnknownSSHPubKeyID struct {
+	pubKey []byte
+}
+
+func (e ErrUnknownSSHPubKeyID) Error() string {
+	return fmt.Sprintf("unknown SSH public key ID for %s", string(e.pubKey))
+}
+
+// ParseSSHPubKey parses a byte slice representation of an SSH Public Key into an
+// SSHPubKeyInfo struct. Returns an appropriate error if parsing failed
+func ParseSSHPubKey(pubKey []byte) (*SSHPubKeyInfo, error) {
+	if !sshPubKeyRegex.Match(pubKey) {
+		return nil, ErrInvalidSSHPubKey{pubKey: pubKey}
+	}
+	capture := sshPubKeyRegex.FindStringSubmatch(string(pubKey))
+	if len(capture) < 4 || capture[3] == "" {
+		return nil, ErrUnknownSSHPubKeyID{pubKey: pubKey}
+	}
+	return &SSHPubKeyInfo{ID: capture[3], Public: string(pubKey)}, nil
+}
+
+// NewKey creates a new key on the controller using the given client
+func NewKey(cl *Client, id string, pubKey string) (api.Key, error) {
+	cl.rwm.RLock()
+	defer cl.rwm.RUnlock()
+	return keys.New(cl.cl, id, pubKey)
+}
