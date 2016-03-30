@@ -9,8 +9,8 @@ import (
 )
 
 type Client struct {
-	rwm *sync.RWMutex
-	cl  *cclient.Client
+	rwm        *sync.RWMutex
+	deisClient *cclient.Client
 }
 
 // New creates a new Client instance. It will not have a token or be logged in
@@ -22,7 +22,7 @@ func New(urlStr string, responseLimit int, sslVerify bool) (*Client, error) {
 	httpCl := cclient.CreateHTTPClient(sslVerify)
 	return &Client{
 		rwm: new(sync.RWMutex),
-		cl: &cclient.Client{
+		deisClient: &cclient.Client{
 			HTTPClient:    httpCl,
 			SSLVerify:     sslVerify,
 			ControllerURL: *u,
@@ -37,10 +37,12 @@ func New(urlStr string, responseLimit int, sslVerify bool) (*Client, error) {
 func (c *Client) IsLoggedIn() bool {
 	c.rwm.RLock()
 	defer c.rwm.RUnlock()
-	return c.cl.Token != ""
+	return c.deisClient.Token != ""
 }
 
 // ControllerURL returns the URL that c is configured to talk to
 func (c *Client) ControllerURL() url.URL {
-	return c.cl.ControllerURL
+	c.rwm.RLock()
+	c.rwm.RUnlock()
+	return c.deisClient.ControllerURL
 }

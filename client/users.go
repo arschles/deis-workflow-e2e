@@ -9,5 +9,5 @@ import (
 func ListUsers(cl *Client, num int) ([]api.User, int, error) {
 	cl.rwm.RLock()
 	defer cl.rwm.RUnlock()
-	return users.List(cl.cl, num)
+	return users.List(cl.deisClient, num)
 }

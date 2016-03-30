@@ -55,5 +55,5 @@ func ParseSSHPubKey(backupKeyID string, pubKey []byte) (*SSHPubKeyInfo, error) {
 func NewKey(cl *Client, id string, pubKey string) (api.Key, error) {
 	cl.rwm.RLock()
 	defer cl.rwm.RUnlock()
-	return keys.New(cl.cl, id, pubKey)
+	return keys.New(cl.deisClient, id, pubKey)
 }
