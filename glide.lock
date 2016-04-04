@@ -1,8 +1,32 @@
-hash: 2cb2c8845b0614257fc1e08274974e33721dd5b0cda08087d07f9cc6d854e04c
-updated: 2016-03-14T12:16:43.865860022-06:00
+hash: 638b1e8568b7a632682ae13e3ea09bfcca415ba94305f3b518e7e06cd522dfc5
+updated: 2016-04-04T11:22:58.361296978-07:00
 imports:
+- name: github.com/deis/pkg
+  version: 7f41ea6de942139d5de67f4d4cb2cccced991f6f
+  subpackages:
+  - time
+- name: github.com/deis/workflow-cli
+  version: 6c176d28c6dc5b8da290e119ecadab744a5645a8
+  subpackages:
+  - controller/api
+  - controller/client
+  - controller/models
+  - controller/models/auth
+  - controller/models/keys
+  - controller/models/users
+  - version
+- name: github.com/goware/urlx
+  version: 86bdc24560383254e8b977da31a823eddf904409
 - name: github.com/onsi/ginkgo
-  version: ac3d45ddd7ef5c4d7fc4d037b615a81f4d67981e
+  version: 105b4823ee2cbebc2b5c562d9ac50694ecc2c689
 - name: github.com/onsi/gomega
   version: 7ce781ea776b2fd506491011353bded2e40c8467
+- name: github.com/opennota/urlesc
+  version: 5fa9ff0392746aeae1c4b37fcc42c65afa7a9587
+- name: github.com/PuerkitoBio/purell
+  version: d69616f51cdfcd7514d6a380847a152dfc2a749d
+- name: golang.org/x/net
+  version: 024ed629fd292398cfd43c9678a5bf004f7defdc
+  subpackages:
+  - idna
 devImports: []
