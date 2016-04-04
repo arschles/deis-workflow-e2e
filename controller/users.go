@@ -1,4 +1,4 @@
-package client
+package controller
 
 import (
 	"github.com/deis/workflow-cli/controller/api"

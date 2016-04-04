@@ -20,6 +20,7 @@ import (
 	"time"
 
 	"github.com/deis/workflow-e2e/apps"
+	"github.com/deis/workflow-e2e/controller"
 	. "github.com/onsi/ginkgo"
 	"github.com/onsi/ginkgo/reporters"
 	. "github.com/onsi/gomega"
@@ -56,6 +57,8 @@ var (
 	homeHome                            = os.Getenv("HOME")
 	defaultMaxTimeout                   = getDefaultMaxTimeout()
 	errMissingRouterHostEnvVar          = fmt.Errorf("missing %s", deisRouterServiceHost)
+	adminDeisClient                     *controller.Client
+	testDeisClient                      *controller.Client
 )
 
 const (
@@ -117,8 +120,11 @@ var _ = BeforeSuite(func() {
 	Expect(err).NotTo(HaveOccurred())
 	os.Setenv("HOME", testHome)
 
-	// register the test-admin user
-	registerHTTP(getController(), "admin", "admin", "admintest@deis.com")
+	controllerURL := getController()
+	adminClient = controller.NewClient(controllerURL, 1000, false)
+	// register the admin user
+	_, adminErr := controller.RegisterOrLogin(adminClient, "admin", "admin", "admintest@deis.com")
+	Expect(adminErr).To(BeNil())
 	profilePath := loginHTTP(getController(), "admin", "admin")
 	adminTestData.Profile = "admin"
 	adminTestData.Username = "admin"
@@ -357,53 +363,15 @@ func gitClean() {
 	Eventually(cmd).Should(Exit(0))
 }
 
-func makeHTTPRequest(url string, method string, jsonData []byte) string {
-	req, err := http.NewRequest(method, url, bytes.NewBuffer(jsonData))
-	req.Header.Set("Content-Type", "application/json")
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Printf("Error making %s request to %s (%s)", method, url, err)
-		os.Exit(1)
-	}
-	defer resp.Body.Close()
-
-	respBody, _ := ioutil.ReadAll(resp.Body)
-	return string(respBody)
-}
-
-func registerHTTP(url string, username string, password string, email string) string {
-	registerURL := fmt.Sprintf("%s/v2/auth/register/", url)
-	registerJSONTemplate := "{\"username\": \"%s\",\"password\": \"%s\",\"email\": \"%s\"}"
-	var registerJSON = []byte(fmt.Sprintf(registerJSONTemplate, username, password, email))
-	return makeHTTPRequest(registerURL, "POST", registerJSON)
-}
-
-func loginHTTP(url string, username string, password string) string {
-	loginURL := fmt.Sprintf("%s/v2/auth/login/", url)
-	loginJSONTemplate := "{\"username\": \"%s\",\"password\": \"%s\"}"
-	var loginJSON = []byte(fmt.Sprintf(loginJSONTemplate, username, password))
-	loginBody := makeHTTPRequest(loginURL, "POST", loginJSON)
-
-	token := strings.TrimSuffix(strings.Split(string(loginBody), ":")[1], "}")
-	clientJSON := "{\"username\":\"%s\",\"ssl_verify\":false,\"controller\":\"%s\",\"token\":%s,\"response_limit\": 999}"
-	deisHome := path.Join(testHome, ".deis")
-	profile := path.Join(deisHome, fmt.Sprintf("%s.json", username))
-	os.MkdirAll(deisHome, 0777)
-	ioutil.WriteFile(profile, []byte(fmt.Sprintf(clientJSON, username, url, token)), 0777)
-	return profile
-}
-
-func initTestData() TestData {
+func initTestData(cl *controller.Client) TestData {
 	randSuffix := rand.Intn(100000)
 	username := fmt.Sprintf("test-%d", randSuffix)
 	password := "asdf1234"
 	email := fmt.Sprintf("test-%d@deis.io", randSuffix)
 	keyName := fmt.Sprintf("deiskey-%v", randSuffix)
 
-	registerHTTP(getController(), username, password, email)
-	profilePath := loginHTTP(getController(), username, password)
+	_, regErr := controller.RegisterOrLogin(cl, username, password, email)
+	Expect(regErr).To(BeNil())
 
 	keyPath := createKey(username, keyName)
 	// Write out a git+ssh wrapper file to avoid known_hosts warnings
