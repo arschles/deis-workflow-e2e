@@ -13,7 +13,7 @@ var _ = Describe("Admin", func() {
 		var testApp App
 
 		BeforeEach(func() {
-			testData = initTestData()
+			testData = initTestData(adminDeisClient)
 			testApp.Name = getRandAppName()
 			gitInit()
 			createApp(testData.Profile, testApp.Name)

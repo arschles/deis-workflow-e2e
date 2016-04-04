@@ -18,7 +18,7 @@ var _ = Describe("Limits", func() {
 		var testData TestData
 
 		BeforeEach(func() {
-			testData = initTestData()
+			testData = initTestData(testDeisClient)
 			os.Chdir("example-go")
 			appName := getRandAppName()
 			createApp(testData.Profile, appName)

@@ -24,7 +24,7 @@ var _ = Describe("Auth", func() {
 	Context("when logged in", func() {
 		var testData TestData
 		BeforeEach(func() {
-			testData = initTestData()
+			testData = initTestData(testDeisClient)
 		})
 
 		It("can log out", func() {

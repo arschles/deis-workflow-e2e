@@ -24,7 +24,7 @@ var _ = Describe("Tags", func() {
 			if _, err := exec.LookPath("kubectl"); err != nil {
 				Skip("kubectl not found in search $PATH")
 			}
-			testData = initTestData()
+			testData = initTestData(testDeisClient)
 			os.Chdir("example-go")
 			appName := getRandAppName()
 			createApp(testData.Profile, appName)

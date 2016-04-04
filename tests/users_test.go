@@ -12,7 +12,7 @@ var _ = Describe("Users", func() {
 		var testData TestData
 
 		BeforeEach(func() {
-			testData = initTestData()
+			testData = initTestData(testDeisClient)
 		})
 
 		It("can't list all users", func() {

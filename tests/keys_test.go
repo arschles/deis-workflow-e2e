@@ -16,7 +16,7 @@ var _ = Describe("Keys", func() {
 	var testData TestData
 
 	BeforeEach(func() {
-		testData = initTestData()
+		testData = initTestData(testDeisClient)
 	})
 
 	It("can list and remove a key", func() {

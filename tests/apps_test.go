@@ -26,7 +26,7 @@ var _ = Describe("Apps", func() {
 
 		BeforeEach(func() {
 			testApp.Name = getRandAppName()
-			testData = initTestData()
+			testData = initTestData(testDeisClient)
 		})
 
 		It("can't get app info", func() {
@@ -65,7 +65,7 @@ var _ = Describe("Apps", func() {
 		var testData TestData
 
 		BeforeEach(func() {
-			testData = initTestData()
+			testData = initTestData(testDeisClient)
 			testApp.Name = getRandAppName()
 			gitInit()
 		})
@@ -108,7 +108,7 @@ var _ = Describe("Apps", func() {
 		var testData TestData
 
 		BeforeEach(func() {
-			testData = initTestData()
+			testData = initTestData(testDeisClient)
 			os.Chdir("example-go")
 			appName := getRandAppName()
 			createApp(testData.Profile, appName)
@@ -167,7 +167,7 @@ var _ = Describe("Apps", func() {
 		var testData TestData
 
 		BeforeEach(func() {
-			testData = initTestData()
+			testData = initTestData(testDeisClient)
 			os.Chdir("example-perl")
 			appName := getRandAppName()
 			createApp(testData.Profile, appName, "--buildpack", "https://github.com/miyagawa/heroku-buildpack-perl.git")

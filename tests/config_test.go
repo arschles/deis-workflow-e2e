@@ -19,7 +19,7 @@ var _ = Describe("Config", func() {
 		var testData TestData
 
 		BeforeEach(func() {
-			testData = initTestData()
+			testData = initTestData(testDeisClient)
 			os.Chdir("example-go")
 			appName := getRandAppName()
 			createApp(testData.Profile, appName)

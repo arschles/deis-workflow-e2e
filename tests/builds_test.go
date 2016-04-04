@@ -42,7 +42,7 @@ var _ = Describe("Builds", func() {
 		var testData TestData
 
 		BeforeEach(func() {
-			testData = initTestData()
+			testData = initTestData(testDeisClient)
 			exampleRepo = "example-go"
 			exampleImage = fmt.Sprintf("deis/%s:latest", exampleRepo)
 			testApp.Name = getRandAppName()
@@ -66,7 +66,7 @@ var _ = Describe("Builds", func() {
 			var testData TestData
 
 			BeforeEach(func() {
-				testData = initTestData()
+				testData = initTestData(testDeisClient)
 				createApp(testData.Profile, testApp.Name)
 				createBuild(testData.Profile, exampleImage, testApp)
 			})
@@ -86,7 +86,7 @@ var _ = Describe("Builds", func() {
 			var testData TestData
 
 			BeforeEach(func() {
-				testData = initTestData()
+				testData = initTestData(testDeisClient)
 				cmdRetryTimeout = 60
 				procFile = fmt.Sprintf("worker: while true; do echo hi; sleep 3; done")
 				testApp.URL = strings.Replace(getController(), "deis", testApp.Name, 1)

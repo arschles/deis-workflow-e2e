@@ -18,8 +18,8 @@ var _ = Describe("Perms", func() {
 		var testApp App
 
 		BeforeEach(func() {
-			testData = initTestData()
-			testData2 = initTestData()
+			testData = initTestData(testDeisClient)
+			testData2 = initTestData(testDeisClient)
 			testApp.Name = getRandAppName()
 			gitInit()
 			createApp(testData.Profile, testApp.Name)

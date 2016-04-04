@@ -17,7 +17,7 @@ var _ = Describe("Healthcheck", func() {
 	Context("with a deployed app", func() {
 		// create and deploy an app
 		BeforeEach(func() {
-			testData = initTestData()
+			testData = initTestData(testDeisClient)
 			sess, err := start("deis apps:create %s", testData.Profile, appName)
 			Eventually(sess).Should(Say("Creating Application... done, created %s", appName))
 			Eventually(sess).Should(Exit(0))

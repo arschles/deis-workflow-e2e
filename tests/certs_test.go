@@ -143,7 +143,7 @@ var _ = Describe("Certs", func() {
 
 	Context("with an app yet to be deployed", func() {
 		BeforeEach(func() {
-			testData = initTestData()
+			testData = initTestData(testDeisClient)
 			gitInit()
 			testApp = App{Name: getRandAppName()}
 			createApp(testData.Profile, testApp.Name)
@@ -168,7 +168,7 @@ var _ = Describe("Certs", func() {
 	Context("with a deployed app", func() {
 
 		BeforeEach(func() {
-			testData = initTestData()
+			testData = initTestData(testDeisClient)
 			os.Chdir(exampleRepo)
 			appName := getRandAppName()
 			createApp(testData.Profile, appName)

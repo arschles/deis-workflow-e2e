@@ -54,7 +54,7 @@ var _ = Describe("Domains", func() {
 	Context("with app yet to be deployed", func() {
 
 		BeforeEach(func() {
-			testData = initTestData()
+			testData = initTestData(testDeisClient)
 			domain = getRandDomain()
 			gitInit()
 
@@ -89,7 +89,7 @@ var _ = Describe("Domains", func() {
 		var testData TestData
 
 		BeforeEach(func() {
-			testData = initTestData()
+			testData = initTestData(testDeisClient)
 			cmdRetryTimeout = 60
 			domain = getRandDomain()
 			os.Chdir("example-go")

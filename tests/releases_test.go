@@ -16,7 +16,7 @@ var _ = Describe("Releases", func() {
 		exampleImage = "deis/example-go"
 
 		BeforeEach(func() {
-			testData = initTestData()
+			testData = initTestData(testDeisClient)
 			gitInit()
 			testApp = App{Name: getRandAppName()}
 			createApp(testData.Profile, testApp.Name)

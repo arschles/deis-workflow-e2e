@@ -1,13 +1,11 @@
 package tests
 
 import (
-	"bytes"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
 	"math/rand"
-	"net/http"
 	neturl "net/url"
 	"os"
 	"os/exec"
@@ -45,7 +43,6 @@ type TestData struct {
 	KeyName       string
 	KeyPath       string
 	Profile       string
-	ProfilePath   string
 	ControllerURL string
 }
 
@@ -121,16 +118,17 @@ var _ = BeforeSuite(func() {
 	os.Setenv("HOME", testHome)
 
 	controllerURL := getController()
-	adminClient = controller.NewClient(controllerURL, 1000, false)
-	// register the admin user
-	_, adminErr := controller.RegisterOrLogin(adminClient, "admin", "admin", "admintest@deis.com")
+
+	// create a client for the admin & register an admin
+	adminDeisClient, err = controller.NewClient(controllerURL, 1000, false)
+	Expect(err).To(BeNil())
+	_, adminErr := controller.RegisterOrLogin(adminDeisClient, "admin", "admin", "admintest@deis.com")
 	Expect(adminErr).To(BeNil())
-	profilePath := loginHTTP(getController(), "admin", "admin")
+
 	adminTestData.Profile = "admin"
 	adminTestData.Username = "admin"
 	adminTestData.Password = "admin"
 	adminTestData.ControllerURL = getController()
-	adminTestData.ProfilePath = profilePath
 
 	// verify this user is an admin by running a privileged command
 	sess, err := start("deis users:list", adminTestData.Profile)
@@ -397,6 +395,5 @@ func initTestData(cl *controller.Client) TestData {
 		KeyPath:       keyPath,
 		ControllerURL: getController(),
 		Profile:       username,
-		ProfilePath:   profilePath,
 	}
 }
